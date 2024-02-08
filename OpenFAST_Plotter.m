@@ -2,6 +2,7 @@
 clear all; close all; clc;
 
 %% ---------- USER INPUTS ---------- %%
+% Note: This file must be run with the desired simulation directory open!!!
 
 % Models to plot
 plot_models = {'Turbine_asBuilt'};
