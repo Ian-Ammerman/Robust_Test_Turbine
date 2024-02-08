@@ -9,7 +9,7 @@ model = 'FOCAL_C1';
 fst_name = 'Turbine_asBuilt';
 
 % Simulation folder for outputs
-sim_folder = 'Steady_12ms';
+sim_folder = 'Steady_10ms';
 
 % OpenFAST version (name of corresponding folder in 'bin')
 version = 'FC1';
