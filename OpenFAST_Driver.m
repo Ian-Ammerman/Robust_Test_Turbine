@@ -5,11 +5,11 @@ clear all; close all; clc;
 home_dir = 'C:\\Umaine Google Sync\\GitHub\\Robust_Test_Turbine';
 
 % Model to test (must match folder name in 'Models' folder)
-model = 'Full_Scale_Stiff_Rotor';
-fst_name = 'Full_Scale_Stiff_Rotor';
+model = 'FOCAL_C1';
+fst_name = 'Turbine_asBuilt';
 
 % Simulation folder for outputs
-sim_folder = 'Steady_10ms';
+sim_folder = 'Steady_24ms';
 
 % OpenFAST version (name of corresponding folder in 'bin')
 version = 'FC1';
