@@ -5,8 +5,8 @@ clear all; close all; clc;
 home_dir = 'C:\\Umaine Google Sync\\GitHub\\Robust_Test_Turbine';
 
 % Model to test (must match folder name in 'Models' folder)
-model = 'FOCAL_C1';
-fst_name = 'Turbine_asBuilt';
+model = 'Full_Scale_Stiff_Rotor';
+fst_name = 'Full_Scale_Stiff_Rotor';
 
 % Simulation folder for outputs
 sim_folder = 'Steady_10ms';

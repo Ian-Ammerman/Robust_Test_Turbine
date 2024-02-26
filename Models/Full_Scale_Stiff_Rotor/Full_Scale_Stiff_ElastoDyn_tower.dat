@@ -1,0 +1,52 @@
+------- ELASTODYN V1.00.* TOWER INPUT FILE -------------------------------------
+FOCAL As Built Full Scale Turbine
+---------------------- TOWER PARAMETERS ----------------------------------------
+11                     NTwInpSt    - Number of input stations to specify tower geometry
+1.0                    TwrFADmp(1) - Tower 1st fore-aft mode structural damping ratio (%)
+1.0                    TwrFADmp(2) - Tower 2nd fore-aft mode structural damping ratio (%)
+1.0                    TwrSSDmp(1) - Tower 1st side-to-side mode structural damping ratio (%)
+1.0                    TwrSSDmp(2) - Tower 2nd side-to-side mode structural damping ratio (%)
+---------------------- TOWER ADJUSTMUNT FACTORS --------------------------------
+1.0                    FAStTunr(1) - Tower fore-aft modal stiffness tuner, 1st mode (-)
+1.0                    FAStTunr(2) - Tower fore-aft modal stiffness tuner, 2nd mode (-)
+1.0                    SSStTunr(1) - Tower side-to-side stiffness tuner, 1st mode (-)
+1.0                    SSStTunr(2) - Tower side-to-side stiffness tuner, 2nd mode (-)
+0.997343               AdjTwMa     - Factor to adjust tower mass density (-) - includes tower cable mass and tower top load cell mass
+1.0                    AdjFASt     - Factor to adjust tower fore-aft stiffness (-)
+1.0                    AdjSSSt     - Factor to adjust tower side-to-side stiffness (-)
+---------------------- DISTRIBUTED TOWER PROPERTIES ----------------------------
+  HtFract       TMassDen         TwFAStif       TwSSStif
+   (-)           (kg/m)           (Nm^2)         (Nm^2)
+0.000000		8397.811		1.02E+13		1.02E+13
+0.100000		8397.811		1.02E+13		1.02E+13
+0.200000		8397.811		1.02E+13		1.02E+13
+0.300000		8397.811		1.02E+13		1.02E+13
+0.400000		8397.811		1.02E+13		1.02E+13
+0.500000		8397.811		1.02E+13		1.02E+13
+0.600000		8397.811		1.02E+13		1.02E+13
+0.700000		8397.811		1.02E+13		1.02E+13
+0.800000		8397.811		1.02E+13		1.02E+13
+0.900000		8397.811		1.02E+13		1.02E+13
+1.000000		8397.811		1.02E+13		1.02E+13
+ ---------------------- TOWER FORE-AFT MODE SHAPES -----
+1.48910   TwFAM1Sh(2) - Mode 1, coefficient of x^2 term
+-0.4959   TwFAM1Sh(3) -       , coefficient of x^3 term
+-0.0028   TwFAM1Sh(4) -       , coefficient of x^4 term
+0.00490   TwFAM1Sh(5) -       , coefficient of x^5 term
+0.00470   TwFAM1Sh(6) -       , coefficient of x^6 term
+44.1178   TwFAM2Sh(2) - Mode 2, coefficient of x^2 term
+-47.4377  TwFAM2Sh(3) -       , coefficient of x^3 term
+-12.3136  TwFAM2Sh(4) -       , coefficient of x^4 term
+22.0343   TwFAM2Sh(5) -       , coefficient of x^5 term
+-5.4008   TwFAM2Sh(6) -       , coefficient of x^6 term
+ ---------------- TOWER SIDE-TO-SIDE MODE SHAPES -------
+1.48130   TwSSM1Sh(2) - Mode 1, coefficient of x^2 term
+-0.4877   TwSSM1Sh(3) -       , coefficient of x^3 term
+-0.0033   TwSSM1Sh(4) -       , coefficient of x^4 term
+0.00520   TwSSM1Sh(5) -       , coefficient of x^5 term
+0.00450   TwSSM1Sh(6) -       , coefficient of x^6 term
+31.8539   TwSSM2Sh(2) - Mode 2, coefficient of x^2 term
+-33.4784  TwSSM2Sh(3) -       , coefficient of x^3 term
+-7.3631   TwSSM2Sh(4) -       , coefficient of x^4 term
+13.0544   TwSSM2Sh(5) -       , coefficient of x^5 term
+-3.0669   TwSSM2Sh(6) -       , coefficient of x^6 term

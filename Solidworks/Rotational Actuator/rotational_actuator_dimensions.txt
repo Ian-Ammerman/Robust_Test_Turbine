@@ -1,0 +1,6 @@
+﻿"outer_diam"= 3in'Outer circle diameter
+"cylinder_diam"= 0.375in'Cylinder inner diameter
+"cylinder_casing_width"= 0.5in'Width/height of cylinder block
+"r_rotation"= ("outer_diam" - "cylinder_casing_width")/2'Radius of rotation of piston
+"end_wall_thickness"= 0.0625in'Thickness of cylinder end wall
+"end_plug_diameter"= 0.125in'Diameter of end plug hole for hydraulic access"o_ring_inner_diameter"= 0.9 * "cylinder_diam""o_ring_thickness"= 0.
