@@ -211,11 +211,11 @@ end
 % subplot(1,2,2), ylabel('Predicted C_t')
 
 %% Plot thrust & performance coefficients
-% load("Stiffer_Blade_Aero.mat");
-% Cp = Aero.Cp;
-% Ct = Aero.Ct;
-% TSR = repmat(Aero.TSR(:,1),1,size(Cp,2));
-% pitch_offset = [0:0.5:10];
+load("Stiffer_Blade_Aero.mat");
+Cp = Aero.Cp;
+Ct = Aero.Ct;
+TSR = repmat(Aero.TSR(:,1),1,size(Cp,2));
+pitch_offset = [0:0.5:10];
 
 figure
 gca; hold on; box on;
