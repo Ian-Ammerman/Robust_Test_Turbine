@@ -3,7 +3,7 @@ FAST Certification Test #25: NREL 5.0 MW Baseline Wind Turbine with OC4-DeepCwin
 ---------------------- SIMULATION CONTROL --------------------------------------
 True          Echo            - Echo input data to <RootName>.ech (flag)
 "FATAL"       AbortLevel      - Error level when simulation should abort (string) {"WARNING", "SEVERE", "FATAL"}
-         60   TMax            - Total run time (s)
+       1000   TMax            - Total run time (s)
      0.0125   DT              - Recommended module time step (s)
           2   InterpOrder     - Interpolation order for input/output time history (-) {1=linear, 2=quadratic}
           0   NumCrctn        - Number of correction iterations (-) {0=explicit calculation, i.e., no corrections}
@@ -43,7 +43,7 @@ True          Echo            - Echo input data to <RootName>.ech (flag)
 "unused"      IceFile         - Name of file containing ice input parameters (quoted string)
 ---------------------- OUTPUT --------------------------------------------------
 True          SumPrint        - Print summary data to "<RootName>.sum" (flag)
-          1   SttsTime        - Amount of time between screen status messages (s)
+         25   SttsTime        - Amount of time between screen status messages (s)
        1000   ChkptTime       - Amount of time between creating checkpoint files for potential restart (s)
      0.0125   DT_Out          - Time step for tabular output (s) (or "default")
           0   TStart          - Time to begin tabular output (s)
