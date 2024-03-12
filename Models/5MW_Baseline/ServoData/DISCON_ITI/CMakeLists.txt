@@ -57,7 +57,7 @@ endmacro(set_ifort_windows)
 
 
 # CMake config
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 2.8.12)
 project(DISCON_ITIBarge)
 enable_language(Fortran)
 

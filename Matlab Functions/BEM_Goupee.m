@@ -18,7 +18,7 @@ clear all; close all; clc;
 %Set inputs (These inputs are for the NREL 5 MW reference wind turbine)
 R = 1.432068311; %Blade radius (m)
 RH = 0.028462998; %Hub radius (m)
-Uinf = 5; %Wind speed (m/s)
+Uinf = 2; %Wind speed (m/s)
 B = 3; %Number of blades (-)
 rho = 1.225; %Density of air (kg/m^3)
 RPMList = [65:5:425]; %Rotor speed (rpm)
@@ -27,13 +27,13 @@ pitch_offset = [-2:0.5:15];
 %Load blade node data
 %Columns: 1- radial position (m), 2 - twist (deg), 3 - dr (m)
 %4 - chord (m), %5 - %airfoil # (-)
-b = load('../Lab Notes & Documentation/stiffer_blade.txt'); %Blade specification is modified NREL 5 MW
+b = load('../Aerodynamics/stiffer_blade.txt'); %Blade specification is modified NREL 5 MW
 
 %Load airfoil data
 %Columns: 1 - alpha in deg, 2 - lift coefficient, 3 - drag coefficient,
 %4 - pitching moment coefficient (not used).
-a1 = load('../Lab Notes & Documentation/Cylinder_airfoil.txt');
-a2 = load('../Lab Notes & Documentation/AG04_MOD_airfoil.txt'); %Airfoil 1 is a cylinder with CD = 0.5
+a1 = load('../Aerodynamics/Cylinder_airfoil.txt');
+a2 = load('../Aerodynamics/AG04_MOD_airfoil.txt'); %Airfoil 1 is a cylinder with CD = 0.5
 
 %Separate out blade information
 r = b(:,1); %Node radial position
@@ -242,7 +242,7 @@ title(ct_leg,'Blade Pitch [deg]')
 Aero.TSR = TSR;
 Aero.Cp = Cp;
 Aero.Ct = Ct;
-save('Stiffer_Blade_Aero.mat','Aero');
+% save('Stiffer_Blade_Aero.mat','Aero');
 
 % %Plot blade flap moments
 % rmoment = r-dr/2; %Locations of moment calculations

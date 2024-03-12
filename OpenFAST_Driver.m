@@ -5,23 +5,19 @@ clear all; close all; clc;
 home_dir = 'C:\\Umaine Google Sync\\GitHub\\Robust_Test_Turbine';
 
 % Model to test (must match folder name in 'Models' folder)
-model = 'FOCAL_C1';
-fst_name = 'Turbine_asBuilt';
+model = '5MW_OC3Spar_DLL_WTurb_WavesIrr';
+fst_name = '5MW_OC3Spar_DLL_WTurb_WavesIrr';
 
 % Simulation folder for outputs
-sim_folder = 'Steady_24ms';
+sim_folder = 'Steady_8ms';
+
+% Define Steady Wind Input
 
 % OpenFAST version (name of corresponding folder in 'bin')
-version = 'FC1';
-bin_name = 'openfast_x64_dev.exe';
+version = 'v3_5_2';
+bin_name = 'openfast_x64.exe';
 
 %% ---------- END USER INPUTS ---------- %%
-
-
-
-
-
-
 
 %% ---------- BEGIN CODE ---------- %%
 % Ensure starting from home dir
