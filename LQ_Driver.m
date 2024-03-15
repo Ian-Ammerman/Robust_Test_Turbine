@@ -2,11 +2,12 @@
 clear all; close all; clc;
 
 %% User Inputs
-sim = 'Steady_12ms';
-model_root = '5MW_OC3Spar_DLL_WTurb_WavesIrr';
+sim = 'DLC_1.6';
+model_root = '5MW_OC4Semi_WSt_WavesWN';
+tc = 10;
 
 %% Directories
-linear_model_dir = 'C:\Umaine Google Sync\GitHub\Robust_Test_Turbine\Models\5MW_OC3Spar_Linear';
+linear_model_dir = 'C:\Umaine Google Sync\GitHub\Robust_Test_Turbine\Models\5MW_OC4Semi_WSt_WavesWN';
 simulations_dir = 'C:\Umaine Google Sync\GitHub\Robust_Test_Turbine\Simulations';
 
 %% Load OpenFAST Results
@@ -24,21 +25,42 @@ load(sprintf('%s/%s_D.mat',linear_model_dir,model_root))
 load(sprintf('%s/%s_x_OP.mat',linear_model_dir,model_root))
 load(sprintf('%s/%s_y_OP.mat',linear_model_dir,model_root))
 
-% Remove excessive inputs
-inputs = [1,8,9,67];
-B = B(:,inputs);
-D = D(:,inputs);
-
-% Design kalman filter
+%% Form state-space object
+% Full system model
 sys = ss(A,B,C,D);
 
+% Target inputs
+% inputs = [1,8,9,67];
+inputs = [1,8,9];
+
+%% Reduce system order
 R = reducespec(sys,'balanced');
 view(R)
-new_order = 11;
-% new_order = input('New Model Order: ');
-% rsys = getrom(R,Order=new_order);
+new_order = 13;
 [rsys,info] = balred(sys,new_order);
 
+% %% Discretize full system
+% full_sysd = c2d(sys,dt,'tustin');
+% [Afull,Bfull,Cfull,Dfull] = ssdata(full_sysd);
+% 
+% Hfull = Cfull([25,7],:); % full measurement function
+% 
+% % Simpilfy input vector
+% Bfull = Bfull(:,inputs);
+% Dfull = Dfull(:,inputs);
+
+%% Discretize reduced system
+red_sysd = c2d(rsys,dt,'tustin');
+[Ared,Bred,Cred,Dred] = ssdata(red_sysd);
+
+measurements = [25,7];
+Hred = Cred(measurements,:); % reduced measurement function
+
+% Simplify input vector
+Bred = Bred(:,inputs);
+Dred = Dred(:,inputs);
+
+%% Compare Impulse Responses
 % % Compare impulse responses to wave excitation
 % [Y,T] = impulse(sys);
 % [Yr,Tr] = impulse(rsys);
@@ -46,20 +68,6 @@ new_order = 11;
 % input_num = 3;
 % Y = Y(:,:,input_num);
 % Yr = Yr(:,:,input_num);
-
-% Discretize full system
-full_sysd = c2d(sys,dt,'tustin');
-[Afull,Bfull,Cfull,Dfull] = ssdata(full_sysd);
-
-Hfull = Cfull([35,10],:); % full measurement function
-
-% Discretize reduced system
-red_sysd = c2d(rsys,dt,'tustin');
-[Ared,Bred,Cred,Dred] = ssdata(red_sysd);
-
-Hred = Cred([35,10],:); % reduced measurement function
-
-% %%
 % for i = 1:13
 %     figure
 %     gca; hold on; box on;
@@ -69,46 +77,72 @@ Hred = Cred([35,10],:); % reduced measurement function
 % end
 
 %% Prepare Inputs
-pitch_commands = (pi/180)*[sim_results.BldPitch1,sim_results.BldPitch2,sim_results.BldPitch3];
+pitch_commands = (pi/180)*[sim_results.BldPitch1,sim_results.BldPitch1,sim_results.BldPitch1];
 PtfmPitch = sim_results.PtfmPitch;
 rot_speed = sim_results.RotSpeed;
 gen_torque = sim_results.GenTq;
 wind = sim_results.Wind1VelX;
 wave = sim_results.Wave1Elev;
 
-%% Prepare Kalman Filter
-Rkf = 10^-4*eye(2);
+% Extra measurements
+TT_acc = sim_results.YawBrTAxp;
 
-%% Simulation Full System
+% Low-pass filter rotor speed measurement
+
+
+% Offset wave inputs by causalization time
+wave_shift = dsearchn(sim_results.Time,tc);
+wave = [wave(wave_shift:end);
+        zeros(wave_shift,1)];
+
+% Input operating points (from .1 file)
+torque = 4.309E4;
+cpitch = 3.359E-1;
+uwind  = 18;
+
+% Adjust inputs with operating point
+pitch_commands = pitch_commands - cpitch;
+gen_torque = gen_torque - torque;
+wind = wind - uwind;
+% Note: wave is OK as OP for wave is always 0
+
+%% Prepare Kalman Filter
+Rkf = 10^-5*eye(length(measurements));
+
+%% Simulation Linear System
 time = sim_results.Time;
 
 % Simulate full system
-P = zeros(size(Afull));
-x = zeros(size(Afull,1),1);
-Yfull = zeros(size(Cfull,1),length(time));
-Qkf = eye(size(Afull));
+P = zeros(size(Ared));
+x = zeros(size(Ared,1),1);
+Ylin = zeros(size(Cred,1),length(time));
+Qkf = eye(size(Ared));
 
 for i = 1:length(time)
 
+    % u = [wind(i);
+    %      gen_torque(i);
+    %      mean(pitch_commands(i,:));
+    %      wave(i)];
+
     u = [wind(i);
          gen_torque(i);
-         mean(pitch_commands(i,:));
-         wave(i)];
+         mean(pitch_commands(i,:))];
 
     % Do prediction step
-    [x,P] = predict(x,P,Afull,Qkf,Bfull,u);
+    [x,P] = predict(x,P,Ared,Qkf,Bred,u);
 
-    % Get measurements
-    z = [PtfmPitch(i),rot_speed(i)]';
-
-    % Do update step
-    [x,P,K] = update(Hfull,P,Rkf,z,x,y_OP([35,10]));
+    % % Get measurements
+    % z = [PtfmPitch(i),rot_speed(i)]';
+    % 
+    % % Do update step
+    % [x,P,K] = update(Hfull,P,Rkf,z,x,y_OP(measurements));
 
     % Log outputs
-    Yfull(:,i) = Cfull*x + Dfull*u + y_OP;
+    Ylin(:,i) = Cred*x + Dred*u + y_OP;
 
 end
-Yfull = Yfull';
+Ylin = Ylin';
 
 %% Simulate reduced system
 P = zeros(size(Ared));
@@ -118,10 +152,14 @@ Qkf = eye(size(Ared));
 
 for i = 1:length(time)
 
+    % u = [wind(i);
+    %      gen_torque(i);
+    %      mean(pitch_commands(i,:));
+    %      wave(i)];
+
     u = [wind(i);
          gen_torque(i);
-         mean(pitch_commands(i,:));
-         wave(i)];
+         mean(pitch_commands(i,:))];
 
     % Do prediction step
     [x,P] = predict(x,P,Ared,Qkf,Bred,u);
@@ -130,7 +168,7 @@ for i = 1:length(time)
     z = [PtfmPitch(i),rot_speed(i)]';
 
     % Do update step
-    [x,P,K] = update(Hred,P,Rkf,z,x,y_OP([35,10]));
+    [x,P,K] = update(Hred,P,Rkf,z,x,y_OP(measurements));
 
     % Log outputs
     Yred(:,i) = Cred*x + Dred*u + y_OP;
@@ -140,14 +178,14 @@ Yred = Yred';
 
 
 %% Plot Comparison
-% close all;
+ close all;
 
 tc = 0;
 
 figure
 gca; hold on; box on;
-plot(time-tc,Yfull(:,35),'DisplayName','Full Model');
-plot(time,Yred(:,35),'DisplayName','Reduced Model');
+plot(time-tc,Ylin(:,25),'DisplayName','Linear Model');
+plot(time-tc,Yred(:,25),'DisplayName','Kalman Filter');
 plot(sim_results.Time,sim_results.PtfmPitch,'DisplayName','OpenFAST');
 title('Platform Pitch [deg]')
 xlabel('Time [s]')
@@ -155,30 +193,75 @@ legend
 
 figure
 gca; hold on; box on;
-plot(time-tc,Yfull(:,11),'DisplayName','Full Model');
-plot(time-tc,Yred(:,11),'DisplayName','Reduced Model');
-plot(sim_results.Time,sim_results.GenSpeed,'DisplayName','OpenFAST');
-title('Generator Speed [RPM]')
+plot(time-tc,Ylin(:,7),'DisplayName','Linear Model');
+plot(time-tc,Yred(:,7),'DisplayName','Kalman Filter');
+plot(sim_results.Time,sim_results.RotSpeed,'DisplayName','OpenFAST');
+title('Rotor Speed [RPM]')
 xlabel('Time [s]')
 legend
 
 figure
 gca; hold on; box on;
-plot(time-tc,Yfull(:,83),'DisplayName','Full Model');
-plot(time-tc,Yred(:,83),'DisplayName','Reduced Model');
+plot(time-tc,Ylin(:,51),'DisplayName','Linear Model');
+plot(time-tc,Yred(:,51),'DisplayName','Kalman Filter');
 plot(sim_results.Time,sim_results.TwrBsMyt,'DisplayName','OpenFAST');
 title('Tower Base Bending Moment [kN-m]')
 xlabel('Time [s]')
 legend
 
-% figure
-% gca; hold on; box on;
-% plot(time-tc,Yfull(:,31),'DisplayName','Full Model');
-% plot(time-tc,Yred(:,31),'DisplayName','Reduced Model');
-% plot(sim_results.Time,sim_results.PtfmSurge,'DisplayName','OpenFAST');
-% title('Platform Surge [m]')
-% xlabel('Time [s]')
-% legend
+figure
+gca; hold on; box on;
+plot(time-tc,Ylin(:,21),'DisplayName','Linear Model');
+plot(time-tc,Yred(:,21),'DisplayName','Kalman Filter');
+plot(sim_results.Time,sim_results.PtfmSurge,'DisplayName','OpenFAST');
+title('Platform Surge [m]')
+xlabel('Time [s]')
+legend
+
+figure
+gca; hold on; box on;
+plot(time-tc,Ylin(:,9),'DisplayName','Linear Model');
+plot(time-tc,Yred(:,9),'DisplayName','Kalman Filter');
+plot(sim_results.Time,sim_results.OoPDefl1,'DisplayName','OpenFAST');
+title('Out-of-Plane Deflection [m]')
+xlabel('Time [s]')
+legend
+
+figure
+gca; hold on; box on;
+plot(time-tc,Ylin(:,15),'DisplayName','Linear Model');
+plot(time-tc,Yred(:,15),'DisplayName','Kalman Filter');
+plot(sim_results.Time,sim_results.YawBrTAxp,'DisplayName','OpenFAST');
+title('Tower-Top Acceleration [m/s^2]')
+xlabel('Time [s]')
+legend
+
+figure
+gca; hold on; box on;
+plot(time-tc,Ylin(:,100),'DisplayName','Linear Model');
+plot(time-tc,Yred(:,100),'DisplayName','Kalman Filter');
+plot(sim_results.Time,sim_results.FAIRTEN1,'DisplayName','OpenFAST');
+title('Port Mooring Tension [N]')
+xlabel('Time [s]')
+legend
+
+figure
+gca; hold on; box on;
+plot(time-tc,Ylin(:,102),'DisplayName','Linear Model');
+plot(time-tc,Yred(:,102),'DisplayName','Kalman Filter');
+plot(sim_results.Time,sim_results.FAIRTEN2,'DisplayName','OpenFAST');
+title('Lead Mooring Tension [N]')
+xlabel('Time [s]')
+legend
+
+figure
+gca; hold on; box on;
+plot(time-tc,Ylin(:,104),'DisplayName','Linear Model');
+plot(time-tc,Yred(:,104),'DisplayName','Kalman Filter');
+plot(sim_results.Time,sim_results.FAIRTEN3,'DisplayName','OpenFAST');
+title('Starboard Mooring Tension [N]')
+xlabel('Time [s]')
+legend
 
 
 function [x,P] = predict(x,P,F,Q,B,u)

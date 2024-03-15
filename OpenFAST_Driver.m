@@ -9,7 +9,7 @@ model = '5MW_OC4Semi_WSt_WavesWN';
 fst_name = '5MW_OC4Semi_WSt_WavesWN';
 
 % Simulation folder for outputs
-sim_folder = 'Steady_18ms';
+sim_folder = 'DLC_1.6';
 
 % Define Steady Wind Input
 

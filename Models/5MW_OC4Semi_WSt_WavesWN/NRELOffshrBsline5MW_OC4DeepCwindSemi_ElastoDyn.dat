@@ -19,7 +19,7 @@ True          TwSSDOF2    - Second side-to-side tower bending-mode DOF (flag)
 True          PtfmSgDOF   - Platform horizontal surge translation DOF (flag)
 True          PtfmSwDOF   - Platform horizontal sway translation DOF (flag)
 True          PtfmHvDOF   - Platform vertical heave translation DOF (flag)
-True          PtfmRDOF    - Platform roll tilt rotation DOF (flag)
+True         PtfmRDOF    - Platform roll tilt rotation DOF (flag)
 True          PtfmPDOF    - Platform pitch tilt rotation DOF (flag)
 True          PtfmYDOF    - Platform yaw rotation DOF (flag)
 ---------------------- INITIAL CONDITIONS --------------------------------------
@@ -34,7 +34,7 @@ True          PtfmYDOF    - Platform yaw rotation DOF (flag)
           0   NacYaw      - Initial or fixed nacelle-yaw angle (degrees)
           0   TTDspFA     - Initial fore-aft tower-top displacement (meters)
           0   TTDspSS     - Initial side-to-side tower-top displacement (meters)
-          5   PtfmSurge   - Initial or fixed horizontal surge translational displacement of platform (meters)
+          0   PtfmSurge   - Initial or fixed horizontal surge translational displacement of platform (meters)
           0   PtfmSway    - Initial or fixed horizontal sway translational displacement of platform (meters)
           0   PtfmHeave   - Initial or fixed vertical heave translational displacement of platform (meters)
           0   PtfmRoll    - Initial or fixed roll tilt rotational displacement of platform (degrees)
@@ -125,6 +125,11 @@ True          TabDelim    - Use tab delimiters in text tabular output file? (fla
 "IPDefl1"                 - Blade 1 in-plane     deflection
 "TwstDefl1"               - Blade 1 tip twist
 "BldPitch1"               - Blade 1 pitch angle
+"BldPitch2"               - Blade 2 pitch angle
+"BldPitch3"               - Blade 3 pitch angle
+"YawBrTAxp"               - Tower-top fore-aft translational acceleration
+"YawBrRAxp"               - Tower-top fore-aft rotational acceleration
+"RotTorq"                 - Rotor torque
 "TTDspFA"                 - Tower fore-aft     deflection
 "TTDspSS"                 - Tower side-to-side deflection
 "TTDspTwst"               - Tower top twist
@@ -134,13 +139,18 @@ True          TabDelim    - Use tab delimiters in text tabular output file? (fla
 "PtfmRoll"                - Platform rotational roll  displacement
 "PtfmPitch"               - Platform rotational pitch displacement
 "PtfmYaw"                 - Platform rotational yaw   displacement
+"PtfmRVxi"                - Platform surge translational velocity
+"PtfmRVyi"                - Platform sway translational velocity
+"PtfmRVzi"                - Platform heave translational velocity
+"PtfmRAxi"                - Platform roll rotational velocity
+"PtfmRAyi"                - Platform pitch rotational velocity
+"PtfmRAzi"                - Platform yaw rotational velocity
 "RootFxc1"                - Out-of-plane shear force at the root of blade 1
 "RootFyc1"                - In-plane     shear force at the root of blade 1
 "RootFzc1"                - Axial              force at the root of blade 1
 "RootMxc1"                - In-plane     bending moment at the root of blade 1
 "RootMyc1"                - Out-of-plane bending moment at the root of blade 1
 "RootMzc1"                - Pitching             moment at the root of blade 1
-"RotTorq"                 - Rotor torque
 "LSSGagMya"               - Low-speed shaft 0- rotating bending moments at the main bearing
 "LSSGagMza"               - Low-speed shaft 90-rotating bending moments at the main bearing
 "YawBrFxp"                - Fore-aft     shear force at the top of the tower (not rotating with nacelle yaw)
